@@ -174,15 +174,7 @@
   box-sizing: border-box;
   display: block;
 }
-.create button {
-  background: #1e0f13;
-  color: #fff;
-  border: 0;
-  margin: 5px;
-  padding: 8px;
-  border-radius: 8px;
-  cursor: pointer;
-}
+
 
 .login-button{
   display: flex;

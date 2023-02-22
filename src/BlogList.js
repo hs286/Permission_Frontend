@@ -9,18 +9,18 @@ import { getAllBlogs } from "./redux/actions";
 import avatar from "./assets/ProfileImg.png";
 import Row from "react-bootstrap/Row";
 import Container from "react-bootstrap/Container";
-import Col from "react-bootstrap/Col";
 
 function BlogList({ users, total }) {
   const history = useHistory();
   const dispatch = useDispatch();
   const [show, setShow] = useState(false);
   const [id, setId] = useState();
+  const [userId, setUserId] = useState();
   var [lim, setLim] = useState(10);
   const [searchVal, setSearchVal] = useState();
   const handleShow = () => setShow(true);
   const handleClose = () => setShow(false);
-  const {_id} = JwtId();
+  const { _id } = JwtId();
   let Numbering = total / lim;
   let obj = {
     array: [],
@@ -34,8 +34,8 @@ function BlogList({ users, total }) {
     dispatch(getAllBlogs(_id, 1, lim));
   }, [lim, total]);
 
-  const handleDelete = (blogid) => {
-    dispatch(deleteBlog(blogid));
+  const handleDelete = (id, userId) => {
+    dispatch(deleteBlog(id, userId));
   };
 
   const handleEdit = (id) => {
@@ -45,8 +45,8 @@ function BlogList({ users, total }) {
 
   const modal = (e) => {
     handleClose();
-    handleDelete(id);
-history.push("/home")
+    handleDelete(id, _id);
+    history.push("/home");
   };
 
   const handlePagination = (val) => {
@@ -84,78 +84,45 @@ history.push("/home")
         ></input>
         <p>{searchVal}</p>
         <Modal
-          className="custom-map-modal modal-dialog"
+          className="custom-map-modal modal-dialog modal-dialog-centered"
           show={show}
           onHide={handleClose}
         >
           <Modal.Body>Are y You Sure You Want To Del This Blog</Modal.Body>
           <Container>
-            <Row>  
-                <Button onClick={handleClose}>No</Button>
-                <Button onClick={modal}>Yes</Button>   
+            <Row>
+              <Button onClick={handleClose}>No</Button>
+              <Button onClick={modal}>Yes</Button>
             </Row>
           </Container>
         </Modal>
         {users !== undefined && (
           <>
-            <table>
-              <thead>
-                <tr>
-                  <th>Profile Picture</th>
-                  <th>Title</th>
-                  <th>Body</th>
-                  <th>Delete</th>
-                  <th>Update</th>
-                </tr>
-              </thead>
-              <tbody className="blog-preview">
-                {users.map((users) => (
-                  <React.Fragment  key={users._id}>
-                    <tr>
-                      <td>
-                        {" "}
-                        <label className="custom-file-upload">
-                          <img
-                            src={
-                              `${process.env.REACT_APP_API}/${users.myFile}` ||
-                              avatar
-                            }
-                          ></img>
-                        </label>
-                      </td>
+            {users.map((users) => (
+              <React.Fragment key={users._id}>
+                <div className="card m-2" style={{ width: "17rem",display:"inline-block" }}>
+                  <img
+                    className="card-img-top"
+                    style={{height:"100px",objectFit:"cover"}}
+                    src={
+                      `${process.env.REACT_APP_API}/${users.myFile}` || avatar
+                    }
+                    alt="Card image cap"
+                  />
+                  <div className="card-body">
+                    <p className="card-text">{users.title}</p>
+                    <p className="card-text">{users.body}</p>
+                  </div>
+                  <button type="button" class="btn btn-info m-2" onClick = {() => handleEdit(users)}>Edit</button>
+                  <button type="button" class="btn btn-danger m-2" onClick = {() => {
+                                            setId(users._id);
+                                            handleShow();
+                                            }}>Delete</button>
 
-                      <td>
-                        {" "}
-                        <p>{users.title}</p>
-                      </td>
-                      <td>
-                        {" "}
-                        <p>{users.body}</p>
-                      </td>
-                      <td>
-                        {" "}
-                        <button
-                          onClick={() => {
-                            setId(users._id);
-                            handleShow();
-                          }}
-                        >
-                          {" "}
-                          delete{" "}
-                        </button>
-                      </td>
-                      <td>
-                        {" "}
-                        <button onClick={() => handleEdit(users)}>
-                          {" "}
-                          Edit{" "}
-                        </button>
-                      </td>
-                    </tr>
-                  </React.Fragment>
-                ))}
-              </tbody>
-            </table>
+                 
+                </div>
+              </React.Fragment>
+            ))}
           </>
         )}
         <div></div>

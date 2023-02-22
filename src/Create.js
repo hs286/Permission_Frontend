@@ -50,7 +50,7 @@ function Create  ()  {
 
     console.log(state.title,image,"in state")
     dispatch(addNewBlog(formData));
-    history.push("/home");
+     history.push("/home");
   };
 
   return (

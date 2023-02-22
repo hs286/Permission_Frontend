@@ -2,6 +2,8 @@ import React, { useState} from "react";
 import {  useHistory } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { updateBlog } from "./redux/actions";
+import { JwtId } from "./helpers/JwtId";
+
 
 function Update() {
   const dispatch = useDispatch();
@@ -9,12 +11,14 @@ function Update() {
   const singleBlog=JSON.parse(localStorage.getItem("userToBeEdit"))
   const [title, setTitle] = useState(singleBlog.title);
   const [body, setBody] = useState(singleBlog.body);
+  const {_id} = JwtId();
+
 
   const handleSubmit = (e) => {
     e.preventDefault();
     singleBlog.title = title;
     singleBlog.body = body;
-    dispatch(updateBlog(singleBlog._id,singleBlog));
+    dispatch(updateBlog(singleBlog._id,singleBlog,_id));
     history.push("/home");
   };
 
