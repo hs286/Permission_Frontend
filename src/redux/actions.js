@@ -28,12 +28,17 @@ const newBlogAdded = (users) => ({
 });
 
 export const addNewBlog = (formData) => async (dispatch) => {
+  var token='';
   formData.forEach((value,key)=>{
     console.log(key,value,"foreach action")
+    if(key=='userId'){
+token=value;
+    }
   })
   try {
+    console.log(token)
     const res = await axios.post(`${process.env.REACT_APP_API}/blogs`,formData,{
-      headers:{"Content-Type":"multipart/form-data"}
+      headers:{"Content-Type":"multipart/form-data", Authorization: token }
     });
     console.log(res,"in action response")
     dispatch(newBlogAdded(res));
@@ -48,7 +53,7 @@ const getingAllBlogs = (users) => ({
 });
 
 export const getAllBlogs = (token,page,limit,searchVal) => async (dispatch) => {
-  console.log(searchVal,"inaction getallblogs")
+  console.log(searchVal,token,"inaction getallblogs")
   try {
     const res = await axios.get(`${process.env.REACT_APP_API}/blogs?page=${page}&limit=${limit}&title=${searchVal}`, {
       headers: { Authorization: token },
@@ -108,18 +113,21 @@ export const checkLoginData = (data) => async (dispatch) => {
   }
 };
 
-export const updateBlog = (id, data) => async () => {
+export const updateBlog = (id, data,_id) => async () => {
   console.log(data, "in acion", id, "id");
   try {
-    await axios.put(`${process.env.REACT_APP_API}/blogs/${id}`,  data );
+    await axios.put(`${process.env.REACT_APP_API}/blogs/${id}`,  data,{headers:{Authorization:_id},});
   } catch (error) {
     console.log(error.message, "Error while updating blog Api");
   }
 };
 
-export const deleteBlog = (id) => async (dispatch) => {
+export const deleteBlog = (id,token) => async (dispatch) => {
+  console.log(id,token,"Indelete")
   try {
-    const res=await axios.delete(`${process.env.REACT_APP_API}/blogs/${id}`);
+    const res=await axios.delete(`${process.env.REACT_APP_API}/blogs/${id}`,{
+      headers: { Authorization: token },
+    });
     console.log(res.data.userId)
     dispatch(getAllBlogs(res.data.userId));
 

@@ -16,8 +16,13 @@ function Home() {
   localStorage.setItem("isLogin", JSON.stringify(true));
   const newBlog = useSelector((state) => state.user.blogs);
   const total = useSelector((state) => state.user.totalBlogs);
-  console.log(newBlog)
+  console.log(newBlog,total,"in home")
+  const {_id}=JwtId();
+
   
+  useEffect(()=>{
+    dispatch(getAllBlogs(_id))
+  },[dispatch,_id])
   const handleSubmit = (e) => {
     e.preventDefault();
   };
