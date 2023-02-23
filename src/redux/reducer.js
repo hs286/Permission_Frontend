@@ -29,6 +29,12 @@ const userReducers = (state = initialState, action) => {
           blogs:action.payload.newBlog,
           totalBlogs:action.payload.total,
         }
+        case types.IS_GET_PERMISSION:
+        return{
+          ...state,
+          permissions:action.payload.data,
+        }
+        
     default:
       return state;
   }

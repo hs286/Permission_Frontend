@@ -15,7 +15,6 @@ export const addNewUser = (data) => async (dispatch) => {
     
      
     console.log(res.data, "Token in check action in new User");
-     dispatch(createPermission(res.data))
     dispatch(newUserAdded(res));
   } catch (error) {
     console.log(error.message, "Error while Adding User");
@@ -85,19 +84,40 @@ try {
 }
 } 
 
-const checkingLoginData = () => ({
-  type: types.CHECK_LOGIN_DATA,
+const getPermissionsAdded = (res) => ({
+  type: types.IS_GET_PERMISSION,
+  payload: res,
 });
+
+export const getPermissions = (id) => async (dispatch) =>{
+  try {
+    console.log(id,"get permisssions of action")
+    const res = await axios.get(`${process.env.REACT_APP_API}/permission/${id}`);
+    console.log(res,"after geting permini in action")
+    dispatch(getPermissionsAdded(res))
+  } catch (error) {
+    console.log(error.message, "Error while Getting Permissions");
+  }
+}
+
+// const checkingLoginData = () => ({
+//   type: types.CHECK_LOGIN_DATA,
+// });
 export const checkLoginData = (data) => async (dispatch) => {
   console.log({data},"in action")
   try {
     const res = await axios.post(`${process.env.REACT_APP_API}/users/login`, data);
-    
+    const {_id}=res.data.newUser[0];
+    console.log("in check action ",_id,"in res")
+
+      //dispatch(getPermissions(_id))
+    //console.log(res,"Inlogin after res")
+    // dispatch(getPermissions(res._id))
     if (res.status== 200) {
       localStorage.setItem("tokeninloacalstorage", JSON.stringify(res.data.token));
-      dispatch(checkingLoginData());
+      // dispatch(checkingLoginData());
       dispatch(isLoggedIn(true));
-      console.log("in check action ",res)
+      
     } 
     else if(res.status==500) {
       window.alert(
