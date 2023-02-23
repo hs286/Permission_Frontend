@@ -1,10 +1,9 @@
-import React, { useEffect } from "react";
+import React,{ useState } from "react";
 import { Link } from "react-router-dom";
-import { useState } from "react";
-import { useDispatch } from "react-redux";
-import { checkLoginData, isLoggedIn } from "../redux/actions";
-import utils from "../helpers/Utils";
 import Button from "react-bootstrap/esm/Button";
+import { useDispatch } from "react-redux";
+import { checkLoginData} from "../redux/actions";
+import utils from "../helpers/Utils";
 
 function Login() {
   utils();
@@ -21,12 +20,10 @@ function Login() {
     setEmail("");
     setPassword("");
     };
-
   return (
     <>
       <div className = "container-md container-fluid ">
         <div className = "row">
-
         <div className = "col-md-8 col-sm-10 col-12 mx-auto">
           <h2 className = "text-center">Login Page</h2>
           <form>

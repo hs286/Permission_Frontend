@@ -1,9 +1,9 @@
 import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
-import { isLoggedIn } from "./redux/actions";
-import { JwtId } from "./helpers/JwtId";
-import { getPermissions } from "./redux/actions";
+import { isLoggedIn } from "../redux/actions";
+import { JwtId } from "../helpers/JwtId";
+import { getPermissions } from "../redux/actions";
 import { useSelector } from "react-redux";
 
 
@@ -18,12 +18,9 @@ function Navbar() {
     dispatch(getPermissions(_id))
   },[_id])
 
-  if(permissions!=undefined){
-    permissions.forEach(element => {
-      if(element.permissionId.type==='POST'){
-       post="POST";
-     }
-   });}
+  if(permissions !== undefined){
+   post = permissions.find((element) => element.permissionId.type === "POST");
+  }
   return (
     <nav className="navbar">
       <h1>{role} Portal</h1>

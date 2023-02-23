@@ -3,7 +3,7 @@ import * as types from "./actionType";
 const initialState = {
   users: [],
   registereduser: [],
-  blogs:[],
+  Assignments:[],
 };
 
 const userReducers = (state = initialState, action) => {
@@ -18,18 +18,18 @@ const userReducers = (state = initialState, action) => {
         ...state,
         users: action.payload,
       };
-    case types.ADD_NEW_BLOG:
+    case types.ADD_NEW_ASSIGNMENT:
       return{
         ...state,
         users:action.payload,
       }
-      case types.GET_NEW_BLOG:
+      case types.GET_ASSIGNMENTS:
         return{
           ...state,
-          blogs:action.payload.newBlog,
-          totalBlogs:action.payload.total,
+          Assignments:action.payload.newAssignments,
+          totalAssignments:action.payload.total,
         }
-        case types.IS_GET_PERMISSION:
+        case types.GET_PERMISSIONS:
         return{
           ...state,
           permissions:action.payload.data,

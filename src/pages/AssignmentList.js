@@ -1,14 +1,16 @@
-import React, { Fragment, useEffect, useState } from "react";
+import 'bootstrap/dist/css/bootstrap.min.css';
+import React, { Fragment, useState } from "react";
 import { useDispatch } from "react-redux";
-import { deleteBlog } from "./redux/actions";
 import { useHistory } from "react-router-dom";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
-import { JwtId } from "./helpers/JwtId";
-import { getAllBlogs } from "./redux/actions";
-import avatar from "./assets/ProfileImg.png";
 import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
+import { deleteBlog } from "../redux/actions";
+import avatar from "../assets/ProfileImg.png";
+import { getAllAssignments } from "../redux/actions";
+import { JwtId } from "../helpers/JwtId";
 
 function BlogList({ users, total,permissions }) {
   //var put="",del="";
@@ -21,8 +23,8 @@ function BlogList({ users, total,permissions }) {
       
   //   }
   // });
-  const put=permissions.find((element) => element.permissionId.type  =="PUT")
-  const del=permissions.find((element) => element.permissionId.type  =="DELETE")
+  const put=permissions.find((element) => element.permissionId.type  === "PUT")
+  const del=permissions.find((element) => element.permissionId.type  === "DELETE")
   const history = useHistory();
   const dispatch = useDispatch();
   const [show, setShow] = useState(false);
@@ -30,7 +32,7 @@ function BlogList({ users, total,permissions }) {
   const [searchVal, setSearchVal] = useState();
   const handleShow = () => setShow(true);
   const handleClose = () => setShow(false);
-  const { _id, role } = JwtId();
+  const { _id } = JwtId();
   let lim=10,Numbering = total / lim;
   let obj = {
     array: [],
@@ -41,7 +43,7 @@ function BlogList({ users, total,permissions }) {
   const terserst = [...Array(Numbering).keys()];
 
   // useEffect(() => {
-  //   dispatch(getAllBlogs(_id, 1, lim));
+  //   dispatch(getAllAssignments(_id, 1, lim));
   // }, [lim, total]);
 
   const handleDelete = (id, userId) => {
@@ -61,7 +63,7 @@ function BlogList({ users, total,permissions }) {
 
   const handlePagination = (val) => {
     const page = val + 1;
-    dispatch(getAllBlogs(_id, page, lim));
+    dispatch(getAllAssignments(_id, page, lim));
   };
 
   for (var l = 0; l < 50 && l < total; l++) {
@@ -72,17 +74,18 @@ function BlogList({ users, total,permissions }) {
   //   console.log("in limithan", limit);
   //   setLim(limit);
   // };
-
-  return (
-    <div>
-      {/* <div>
+ /* <div>
          {permissions.map((data)=>(
           <div>
           <p>{data}</p>
           </div>
          ))}
       
-      </div> */}
+      </div> */
+
+  return (
+    
+     
       <div className = "create">
         {/* <h4>Set Limit</h4>
         <select onChange={(e) => handlelimit(e.target.value)}>
@@ -90,36 +93,42 @@ function BlogList({ users, total,permissions }) {
             <option value={option}>{option}</option>
           ))}
         </select> */}
-        <h5>Search Assignments</h5>
+        <h4>Search Assignments</h4>
         <input
           type = "text"
           value = {searchVal}
           onChange = {(e) => {
             e.preventDefault();
             setSearchVal(e.target.value);
-            dispatch(getAllBlogs(_id, undefined, undefined, e.target.value));
+            dispatch(getAllAssignments(_id, undefined, undefined, e.target.value));
           }}
         ></input>
-        <p>{searchVal}</p>
         <Modal
-          className = "custom-map-modal modal-dialog modal-dialog-centered"
+          className = "custom-map-modal"
           show = {show}
           onHide = {handleClose}
         >
-          <Modal.Body>Are y You Sure You Want To Del This Blog</Modal.Body>
+          <Modal.Body>Are you sure you want to delete this assignment?</Modal.Body>
           <Container>
-            <Row>
-              <Button onClick = {handleClose}>No</Button>
-              <Button onClick = {modal}>Yes</Button>
+            <Row style={{display:"inline-flex", margin:"4px" }}>
+              <Col>
+              <Button onClick = {handleClose} className = "btn-info">No</Button>
+              </Col>
+              <Col>
+              <Button onClick = {modal} className="btn-danger">Yes</Button>
+              </Col>
             </Row>
           </Container>
         </Modal>
         {users !== undefined && (
           <>
+          <div className="container-fluid d-flex">
+            <div className="row">
             {users.map((users) => (
               <React.Fragment key = {users._id}>
+                <div className="col m-3">
                 <div
-                  className = "card m-2"
+                  className = "card  h-100"
                   style = {{ width: "17rem", display: "inline-block" }}
                 >
                   <img
@@ -157,15 +166,18 @@ function BlogList({ users, total,permissions }) {
                     
                   
                 </div>
+                </div>
               </React.Fragment>
             ))}
+            </div>
+            </div>
           </>
         )}
-        <div></div>
+
         {terserst.map((val) => (
           <Fragment key = {val}>
             <span
-              className = "btn btn-info m-2"
+              className = "btn m-2"
               onClick = {() => handlePagination(val)}
             >
               {val + 1}
@@ -173,9 +185,9 @@ function BlogList({ users, total,permissions }) {
           </Fragment>
         ))}
         
-        {users.length === 0 && <h4>No blogs exists against this user...</h4>}
+        {users.length === 0 && <h4>No Assignments exists against this user...</h4>}
       </div>
-    </div>
+    
   );
 }
 

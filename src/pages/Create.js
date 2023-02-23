@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { useHistory } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { addNewBlog } from "./redux/actions";
-import { JwtId } from "./helpers/JwtId";
+import { addnewAssignments } from "../redux/actions";
+import { JwtId } from "../helpers/JwtId";
 import React from "react";
-import avatar from './assets/ProfileImg.png'
+import avatar from '../assets/ProfileImg.png'
 
 function Create  ()  {
   const dispatch = useDispatch();
@@ -38,21 +38,21 @@ function Create  ()  {
     formData.append('body',state.body)
     formData.append('userId',state.userId)
     formData.append('userRole',state.role)
-    dispatch(addNewBlog(formData));
+    dispatch(addnewAssignments(formData));
      history.push("/home");
   };
 
   return (
     <div className="create">
-      <h2>Add a New Blog</h2>
+      <h2>Add a new assignment</h2>
       <form onSubmit = {handleSubmit}>
-        <label>Blog title:</label>
+        <label>Assignment title:</label>
         <input
           name = "title"
           value = {title}
           onChange = {handleInputChange}
         />
-        <label>Blog body:</label>
+        <label>Assignment body:</label>
         <input
           name = "body"
           value = {body}
@@ -60,7 +60,7 @@ function Create  ()  {
         ></input>
         <label htmlFor = "file-upload" className = "custom-file-upload"><img src = {state.myFile || avatar } alt="Empty"/></label>
         <input id = 'file-upload' label = "Image"   name = "myFile" type = "file" accept = {"jpeg" || "png"} onChange={(e) => {handleInputImage(e)}}/>
-        <button>Add Blog</button>
+        <button>Add Assignment</button>
       </form>
     </div>
   );

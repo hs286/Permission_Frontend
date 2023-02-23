@@ -1,6 +1,7 @@
-import * as types from "./actionType";
 import axios from "axios";
 import dotenv from 'dotenv';
+import toast from "react-hot-toast";
+import * as types from "./actionType";
 
 dotenv.config();
 
@@ -12,147 +13,128 @@ const newUserAdded = (users) => ({
 export const addNewUser = (data) => async (dispatch) => {  
   try {
     const res = await axios.post(`${process.env.REACT_APP_API}/users/register`,  data );
-    
-     
-    console.log(res.data, "Token in check action in new User");
+    toast.success("New user registered successfully")
     dispatch(newUserAdded(res));
   } catch (error) {
-    console.log(error.message, "Error while Adding User");
+    toast.error("Incorrect login credentials")
+    console.log(error.message, "Error while adding user");
   }
 };
 
-const newBlogAdded = (users) => ({
-  type: types.ADD_NEW_BLOG,
+const newAssignmentsAdded = (users) => ({
+  type: types.ADD_NEW_ASSIGNMENT,
   payload: users,
 });
 
-export const addNewBlog = (formData) => async (dispatch) => {
+export const addnewAssignments = (formData) => async (dispatch) => {
   var token='';
   formData.forEach((value,key)=>{
-    console.log(key,value,"foreach action")
-    if(key=='userId'){
-token=value;
+    if(key === 'userId'){
+      token=value;
     }
   })
   try {
-    console.log(token)
-    const res = await axios.post(`${process.env.REACT_APP_API}/blogs`,formData,{
+    const res = await axios.post(`${process.env.REACT_APP_API}/Assignments`,formData,{
       headers:{"Content-Type":"multipart/form-data", Authorization: token }
     });
-    console.log(res,"in action response")
-    dispatch(newBlogAdded(res));
+    toast.success("New blog added successfully")
+    dispatch(newAssignmentsAdded(res));
   } catch (error) {
-    console.log(error.message, "Error while Adding Blog");
+    console.log(error.message, "Error while adding assignment");
   }
 };
 
-const getingAllBlogs = (users) => ({
-  type: types.GET_NEW_BLOG,
+const getingAllAssignments = (users) => ({
+  type: types.GET_ASSIGNMENTS,
   payload: users,
 });
 
-export const getAllBlogs = (token,page,limit,searchVal) => async (dispatch) => {
-  console.log(searchVal,token,"inaction getallblogs")
+export const getAllAssignments = (token,page,limit,searchVal) => async (dispatch) => {
+  (searchVal === undefined || searchVal === "" ? toast("Getting all assignments") : toast("Searching by title"))
   try {
-    const res = await axios.get(`${process.env.REACT_APP_API}/blogs?page=${page}&limit=${limit}&title=${searchVal}`, {
+    const res = await axios.get(`${process.env.REACT_APP_API}/Assignments?page=${page}&limit=${limit}&title=${searchVal}`, {
       headers: { Authorization: token },
     });
-    dispatch(getingAllBlogs(res.data));
+    dispatch(getingAllAssignments(res.data));
   } catch (error) {
-    console.log(error.message, "Error while Calling Api");
+    console.log(error.message, "Error while getting assignments");
   }
 };
 
-export const getAllBlogsByTitle = (token,searchVal) => async (dispatch) => {
+export const getAllAssignmentsByTitle = (token,searchVal) => async (dispatch) => {
+  toast("Getting all assignments by title")
   try {
-    const res = await axios.get(`${process.env.REACT_APP_API}/blogs?searchVal=${searchVal}`, {
+    const res = await axios.get(`${process.env.REACT_APP_API}/Assignments?searchVal=${searchVal}`, {
       headers: { Authorization: token },
     });
-    dispatch(getingAllBlogs(res.data));
+    dispatch(getingAllAssignments(res.data));
   } catch (error) {
-    console.log(error.message, "Error while Calling Api");
+    console.log(error.message, "Error while getting assignments by title");
   }
 };
 
 export const createPermission = (data) => async(dispatch) =>{
 try {
-  const res = await axios.post(`${process.env.REACT_APP_API}/permission`, data);
-  console.log(res,"In create action permission")
+  await axios.post(`${process.env.REACT_APP_API}/permission`, data);
 } catch (error) {
-  console.log(error.message, "Error while creating Permissions");
-
+  console.log(error.message, "Error while creating permissions");
 }
 } 
 
 const getPermissionsAdded = (res) => ({
-  type: types.IS_GET_PERMISSION,
+  type: types.GET_PERMISSIONS,
   payload: res,
 });
 
 export const getPermissions = (id) => async (dispatch) =>{
   try {
-    console.log(id,"get permisssions of action")
     const res = await axios.get(`${process.env.REACT_APP_API}/permission/${id}`);
-    console.log(res,"after geting permini in action")
     dispatch(getPermissionsAdded(res))
   } catch (error) {
-    console.log(error.message, "Error while Getting Permissions");
+    console.log(error.message, "Error while getting permissions.");
   }
 }
 
-// const checkingLoginData = () => ({
-//   type: types.CHECK_LOGIN_DATA,
-// });
 export const checkLoginData = (data) => async (dispatch) => {
-  console.log({data},"in action")
+  console.log(data.email,data.password)
   try {
-    const res = await axios.post(`${process.env.REACT_APP_API}/users/login`, data);
-    const {_id}=res.data.newUser[0];
-    console.log("in check action ",_id,"in res")
+    const res = await axios.post(`${process.env.REACT_APP_API}/users?email=${data.email}&password=${data.password}`);
 
-      //dispatch(getPermissions(_id))
-    //console.log(res,"Inlogin after res")
-    // dispatch(getPermissions(res._id))
-    if (res.status== 200) {
+    if (res.status === 200) {
+      toast.success("Successfully logged in.");
       localStorage.setItem("tokeninloacalstorage", JSON.stringify(res.data.token));
-      // dispatch(checkingLoginData());
       dispatch(isLoggedIn(true));
-      
     } 
-    else if(res.status==500) {
-      window.alert(
-        "The credential with which you have logged in are not registered"
-      );
-    }
   } catch (error) {
-    window.alert(
-      "The credential with which you have logged in are not registered"
-    );
-    console.error("Error while Calling Api in Checkin")
-    console.log(error.message, "Error while Calling Api in Checkin");
+    toast.error("The credential with which you have logged in are not registered.",error.message)
   }
 };
 
 export const updateBlog = (id, data,_id) => async () => {
-  console.log(data, "in acion", id, "id");
+  toast("Updating assignment.")
   try {
-    await axios.put(`${process.env.REACT_APP_API}/blogs/${id}`,  data,{headers:{Authorization:_id},});
+    await axios.put(`${process.env.REACT_APP_API}/Assignments/${id}`,  data,{headers:{Authorization:_id},});
+    toast.success("Assignment updated successfully");
+
   } catch (error) {
-    console.log(error.message, "Error while updating blog Api");
+    toast.error("Unable to Update Assignment",error)
+    console.log(error.message, "Error while updating assignment");
   }
 };
 
 export const deleteBlog = (id,token) => async (dispatch) => {
-  console.log(id,token,"Indelete")
+  toast("Deleting the assignment")
+
   try {
-    const res=await axios.delete(`${process.env.REACT_APP_API}/blogs/${id}`,{
+    const res=await axios.delete(`${process.env.REACT_APP_API}/Assignments/${id}`,{
       headers: { Authorization: token },
     });
-    console.log(res.data.userId)
-    dispatch(getAllBlogs(res.data.userId));
+    toast.success("Assignment deleted successfully")
 
+    dispatch(getAllAssignments(res.data.userId));
   } catch (error) {
-    console.log(error.message, "Error while Deleting blog Api");
+    toast.error(error.message, "Error while deleting the assignment");
+    console.log(error.message, "Error while deleting assignment api");
   }
 };
 
